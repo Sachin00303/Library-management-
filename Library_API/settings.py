@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-%98)7cwbf^qhdx+1k==db^2s!$@!o^okkj2yuncp54rf5&+bcg'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -161,8 +161,5 @@ SIMPLE_JWT = {
 
 PASSWORD_RESET_TIMEOUT=900
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8080",
-    "http://127.0.0.1:9000",
-]
+
 AUTH_USER_MODEL="library.MyUser"
