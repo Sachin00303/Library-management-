@@ -207,7 +207,7 @@ import json
 from django.contrib import messages
 from .forms import *
 from collections import Counter
-API_BASE_URL = "http://127.0.0.1:8000/api"
+API_BASE_URL = "https://library-management-heu7.onrender.com"
 
 def user_login(request):
     if request.method == 'POST':
