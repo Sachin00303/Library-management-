@@ -1,0 +1,122 @@
+{% extends 'Librarian_dashboard.html' %}
+
+{% block title %}Add New Book{% endblock %}
+
+{% block content %}
+<div class="col-md-9">
+
+    <h1>Matched Books</h1>
+    
+    {% if error %}
+        <p>{{ error }}</p>
+    {% else %}
+        <table class="table table-hover">
+            <thead>
+                <tr class="table-success">
+                    <th>Ti</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in books %}
+                    <tr class="table-light">
+                        <td>{{ book.id }}</td>
+                        <td>{{ book.title }}</td>
+                        <td>{{ book.author }}</td>
+                        <td>
+                            <button class="btn btn-primary" onclick="showBorrowForm('{{ book.id }}', '{{ book.title }}')">
+                                Borrow
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <!-- Borrow Request Form -->
+    <form id="borrowRequestForm" style="display: none;" class="form-container">
+        <h3 id="selectedBookTitle" class="form-title"></h3>
+        <input type="hidden" id="bookId" name="bookId">
+    
+        <div class="form-group">
+            <label for="start_date" class="form-label">Start Date</label>
+            <input type="date" id="start_date" name="start_date" class="form-input" required>
+        </div>
+    
+        <div class="form-group">
+            <label for="end_date" class="form-label">End Date</label>
+            <input type="date" id="end_date" name="end_date" class="form-input" required>
+        </div>
+    
+        <button type="button" class="form-button" onclick="submitBorrowRequest()">Submit Request</button>
+    </form>
+    
+    <div id="responseMessage" class="message"></div>
+    
+    
+
+    <script>
+        // Function to show borrow form for a specific book
+        function showBorrowForm(bookId, bookTitle) {
+            const form = document.getElementById('borrowRequestForm');
+            form.style.display = 'block';
+            document.getElementById('bookId').value = bookId;
+            document.getElementById('selectedBookTitle').textContent = `Request to Borrow: ${bookTitle}`;
+        }
+
+        // Function to submit borrow request
+        async function submitBorrowRequest() {
+            const bookId = document.getElementById('bookId').value;
+            const startDate = document.getElementById('start_date').value;
+            const endDate = document.getElementById('end_date').value;
+
+            if (!startDate || !endDate) {
+                displayMessage('Start date and end date are required.', 'error');
+                return;
+            }
+
+            const payload = {
+                start_date: startDate,
+                end_date: endDate,
+            };
+
+            try {
+                const response = await fetch(`/borrow-request/${bookId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken(),
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                const data = await response.json();
+
+                if (response.status === 201) {
+                    displayMessage(data.message, 'success');
+                } else {
+                    displayMessage(data.error || 'Failed to create borrow request.', 'error');
+                }
+            } catch (error) {
+                displayMessage('An error occurred. Please try again.', 'error');
+            }
+        }
+
+        // Function to display messages
+        function displayMessage(message, type) {
+            const messageDiv = document.getElementById('responseMessage');
+            messageDiv.textContent = message;
+            messageDiv.className = `message ${type}`;
+        }
+
+        // Function to get CSRF token
+        function getCSRFToken() {
+            const cookieValue = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
+            return cookieValue ? cookieValue.split('=')[1] : '';
+        }
+    </script>
+</div>
+{% endblock %}

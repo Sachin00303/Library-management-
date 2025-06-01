@@ -1,0 +1,28 @@
+{% extends 'Librarian_dashboard.html' %}
+
+{% block title %}Books List{% endblock %}
+{% block content %}
+<div class="col-md-9">
+    <table class="table table-hover">
+        <thead>
+        <tr class="table-success">
+            <th>Title</th>
+            <th>Author</th>
+            <th>Totale Books</th>
+            <th>present Books</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for book in books %}
+            <tr class="table-light">
+                <td>{{ book.title }}</td>
+                <td>{{ book.author }}</td>
+                <td>{{ book.count }}</td>
+                <td>{{ book.present }}</td>
+                
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock  %}

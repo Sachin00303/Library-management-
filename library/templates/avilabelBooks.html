@@ -1,0 +1,71 @@
+{% extends 'Librarian_dashboard.html' %}
+
+{% block title %}Books{% endblock %}
+
+{% block content %}
+<div class="col-md-9">
+        {% if books %}
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- Available Books Table -->
+                    <h4>Available Books</h4>
+                    <table class="table table-bordered table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Availability</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for book in books %}
+                                <tr>
+                                    <td>{{ book.title }}</td>
+                                    <td>{{ book.author }}</td>
+                                    <td><span class="badge bg-success">Available</span></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-warning text-center">
+                <strong>No available books found.</strong>
+            </div>
+        {% endif %}
+
+        {% if unavailable_books %}
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <!-- Unavailable Books Table -->
+                    <h4>Unavailable Books</h4>
+                    <table class="table table-bordered table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Availability</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for book in unavailable_books %}
+                                <tr>
+                                    <td>{{ book.title }}</td>
+                                    <td>{{ book.author }}</td>
+                                    <td><span class="badge bg-danger">Unavailable</span></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% else %}
+            {% if user.is_librarian %}
+            <div class="alert alert-warning text-center">
+                <strong>No unavailable books found.</strong>
+            </div>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}

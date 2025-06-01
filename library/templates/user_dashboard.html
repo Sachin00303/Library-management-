@@ -1,0 +1,96 @@
+{% extends 'librarian_dashboard.html' %}
+
+{% block title %}User Dashboard{% endblock %}
+
+{% block content %}
+<div class="col-md-9">
+  <div class="row">
+    {% for book in books %}
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm h-100">
+                    <!-- Display single book image -->
+                    <img 
+                        src="{{ book.img }}" 
+                        class="card-img-top img-fluid" 
+                        alt="{{ book.title }}" 
+                        style="max-height: 250px; max-width: 100%; object-fit: contain; cursor: pointer;" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#bookModal-{{ book.title|slugify }}">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a 
+                                href="{% url 'listofbook' book.title %}" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#bookModal-{{ book.title|slugify }}">
+                                {{ book.title }}
+                            </a>
+                        </h5>
+                        <p class="card-text">
+                            <strong>Author:</strong> {{ book.author }}<br>
+                            <strong>Available Copies:</strong> {{ book.count }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal for the book -->
+            <div class="modal fade" id="bookModal-{{ book.title|slugify }}" tabindex="-1" aria-labelledby="modalLabel-{{ book.title|slugify }}" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalLabel-{{ book.title|slugify }}">{{ book.title }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <h6><strong>Author:</strong> {{ book.author }}</h6>
+                            <h6><strong>Total Copies:</strong> {{ book.count }}</h6>
+                            <hr>
+                            <h5>Copies:</h5>
+                            <div class="row">
+                                {% for copy in book.copies %}
+                                    <div class="col-md-4 text-center">
+                                        <p><strong>Copy ID:</strong> {{ copy.id }}</p>
+                                        <p><strong>Status:</strong> {{ copy.status }}</p>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    {% empty %}
+      <div class="col-12">
+        <p class="text-muted">No available books at the moment.</p>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="modal fade" id="bookCopiesModal" tabindex="-1" aria-labelledby="bookCopiesModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="bookCopiesModalLabel">Available Copies</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Status</th> 
+            </tr>
+          </thead>
+          <tbody id="book-copies-list"></tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

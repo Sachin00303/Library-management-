@@ -1,0 +1,27 @@
+{% extends 'Librarian_dashboard.html' %}
+
+{% block title %}Add New Book{% endblock %}
+
+{% block content %}
+    <div class="col-md-9">
+        <h1>Add a New Book</h1>
+        
+        <div class="card">
+            <div class="card-body">
+                <form action="{% url 'AddBook' %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="book_title">Book Title</label>
+                        {{ form.title }} <!-- Adjust form field name based on the form -->
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="author">Author</label>
+                        {{ form.author }} <!-- Adjust form field name based on the form -->
+                    </div>
+                   <button type="submit" class="btn btn-primary btn-block">Add Book</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends 'Librarian_dashboard.html' %}
+
+{% block title %}Borrow History{% endblock %}
+
+{% block content %}
+<div class="col-md-9">
+    {% if user.is_librarian %}
+        <h3>Pending Borrow Requests</h3>
+        <table class="table table-warning">
+            <thead>
+                <tr class="table-primary">
+                    <th>#</th>
+                    <th>User Name</th>
+                    <th>Book Title</th>
+                    <th>Author</th>
+                    <th>Borrow Date</th>
+                    <th>Return Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for h in pending_history %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ h.email }}</td>
+                    <td>{{ h.book_title }}</td>
+                    <td>{{ h.book_author }}</td>
+                    <td>{{ h.start_date }}</td>
+                    <td>{{ h.end_date }}</td>
+                    <td>{{ h.status }}</td>
+                    <td>
+                        <form method="POST" action="{% url 'update_status' h.id %}">
+                            {% csrf_token %}
+                            <button type="submit" name="action" value="Approved" class="btn btn-success">Approve</button>
+                            <button type="submit" name="action" value="Denied" class="btn btn-danger">Deny</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="{% url 'download' %}" class="btn btn-primary">Download CSV</a>
+    {% else %}
+    <h3>Pending Borrow Requests</h3>
+    <table class="table table-warning">
+        <thead>
+            <tr class="table-primary">
+                <th>#</th>
+                <th>Book Title</th>
+                <th>Author</th>
+                <th>Borrow Date</th>
+                <th>Return Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for h in pending_history %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ h.book_title }}</td>
+                <td>{{ h.book_author }}</td>
+                <td>{{ h.start_date }}</td>
+                <td>{{ h.end_date }}</td>
+                <td>{{ h.status }}</td>
+            {% endfor %}
+        </tbody>
+    </table>
+
+   {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'librarian_dashboard.html' %}
+ {% block title%} Issued Books {% endblock %}
+{% block content %}
+<div class="col-md-9">
+    {% if user.is_librarian %}
+<h3>Approved Borrow Requests</h3>
+        <table class="table table-success">
+            <thead>
+                <tr class="table-primary">
+                    <th>#</th>
+                    <th> User Name</th>
+                    <th>Book Title</th>
+                    <th>Author</th>
+                    <th>Borrow Date</th>
+                    <th>Return Date</th>
+                    <th>Status</th>
+                    <th>Action</th> <!-- Added Action column -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for h in approved_history %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ h.email }}</td>
+                    <td>{{ h.book_title }}</td>
+                    <td>{{ h.book_author }}</td>
+                    <td>{{ h.start_date }}</td>
+                    <td>{{ h.end_date }}</td>
+                    <td>{{ h.status }}</td>
+                    <td>
+                        <!-- Return button, only visible if status is APPROVED -->
+                        {% if h.status == 'Approved' %}
+                            <form action="{% url 'update_status' h.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" name="action" value="Returned" class="btn btn-success">Returned</button>
+                            </form>
+                        {% endif %}
+                        <a href="{% url 'download' h.email %}" class="btn btn-primary">Download CSV</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <a href="{% url 'download' %}" class="btn btn-primary">Download CSV</a>
+   
+    {% else %}
+    <h3>Approved Borrow Requests</h3>
+    <table class="table table-success">
+        <thead>
+            <tr class="table-primary">
+                <th>#</th>
+                <th>Book Title</th>
+                <th>Author</th>
+                <th>Borrow Date</th>
+                <th>Return Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for h in approved_history %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ h.book_title }}</td>
+                <td>{{ h.book_author }}</td>
+                <td>{{ h.start_date }}</td>
+                <td>{{ h.end_date }}</td>
+                <td>{{ h.status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+        <a href="{% url 'download' %}" class="btn btn-primary">Download CSV</a>
+    {% endif %}
+</div>
+{% endblock %}
